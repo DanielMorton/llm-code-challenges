@@ -57,9 +57,9 @@ class LeetCrawler(Crawler):
             input("Press Enter after manually clicking Continue or if you need to proceed...")
 
     def _enter_credentials(self, username, password):
-        self.input_text((By.ID, EMAIL), username + Keys.ENTER)
+        self.input_text(By.ID, EMAIL, username + Keys.ENTER)
         self._handle_additional_auth()
-        self.input_text((By.XPATH, PASSWORD), password + Keys.ENTER)
+        self.input_text(By.XPATH, PASSWORD, password + Keys.ENTER)
 
     def _handle_additional_auth(self):
         try:

@@ -5,42 +5,42 @@ from selenium.webdriver.support import expected_conditions as ec
 
 class Crawler:
     def __init__(self, headless=False, timeout=30):
-        #options = uc.ChromeOptions()
-        #options.headless = headless
-        self.driver = uc.Chrome()
+        options = uc.ChromeOptions()
+        options.headless = headless
+        self.driver = uc.Chrome(options=options)
         self.wait = WebDriverWait(self.driver, timeout)
 
     def navigate_to(self, url):
         """Navigate to the given URL."""
         self.driver.get(url)
 
-    def find_element(self, locator):
+    def find_element(self, by, value):
         """Find an element using Selenium expected_conditions."""
-        return self.wait.until(ec.presence_of_element_located(locator))
+        return self.wait.until(ec.presence_of_element_located((by, value)))
 
-    def click_element(self, locator):
+    def click_element(self, by, value):
         """Click an element."""
-        element = self.find_element(locator)
+        element = self.find_element(by, value)
         element.click()
 
-    def input_text(self, locator, text):
+    def input_text(self, by, value, text):
         """Input text into an appropriate element."""
-        element = self.find_element(locator)
+        element = self.find_element(by, value)
         element.clear()
         element.send_keys(text)
 
-    def get_text(self, locator):
+    def get_text(self, by, value):
         """Get text from an element."""
-        element = self.find_element(locator)
+        element = self.find_element(by, value)
         return element.text
 
     def get_current_url(self):
         """Return the current URL."""
         return self.driver.current_url
 
-    def press_key(self, locator, *keys):
+    def press_key(self, by, value, *keys):
         """Press one or more Selenium keys on an element."""
-        element = self.find_element(locator)
+        element = self.find_element(by, value)
         element.send_keys(*keys)
 
     def close(self):
