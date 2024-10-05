@@ -9,24 +9,28 @@ class ProblemType(Enum):
 
 
 class ProgrammingLanguage(Enum):
-    CPP = 'cpp'
-    JAVA = 'java'
-    PYTHON = 'python'
-    C = 'c'
-    CSHARP = 'csharp'
-    JAVASCRIPT = 'javascript'
-    TYPESCRIPT = 'typescript'
-    PHP = 'php'
-    SWIFT = 'swift'
-    KOTLIN = 'kotlin'
-    DART = 'dart'
-    GO = 'go'
-    RUBY = 'ruby'
-    SCALA = 'scala'
-    RUST = 'rust'
-    RACKET = 'racket'
-    ERLANG = 'erlang'
-    ELIXIR = 'elixir'
+    CPP = ('cpp', 'C++')
+    JAVA = ('java', 'Java')
+    PYTHON = ('python', 'Python')
+    C = ('c', 'C')
+    CSHARP = ('csharp', 'C#')
+    JAVASCRIPT = ('javascript', 'JavaScript')
+    TYPESCRIPT = ('typescript', 'TypeScript')
+    PHP = ('php', 'PHP')
+    SWIFT = ('swift', 'Swift')
+    KOTLIN = ('kotlin', 'Kotlin')
+    DART = ('dart', 'Dart')
+    GO = ('go', 'Go')
+    RUBY = ('ruby', 'Ruby')
+    SCALA = ('scala', 'Scala')
+    RUST = ('rust', 'Rust')
+    RACKET = ('racket', 'Racket')
+    ERLANG = ('erlang', 'Erlang')
+    ELIXIR = ('elixir', 'Elixir')
+
+    def __init__(self, arg_name, output_name):
+        self.arg_name = arg_name
+        self.output_name = output_name
 
 
 def parse_arguments():
@@ -44,7 +48,7 @@ def parse_arguments():
 
     lang_group = parser.add_mutually_exclusive_group(required=True)
     for lang in ProgrammingLanguage:
-        lang_group.add_argument(f'--{lang.name.lower()}',
+        lang_group.add_argument(f'--{lang.arg_name}',
                                 action='store_const', const=lang, dest='programming_language')
 
     args = parser.parse_args()

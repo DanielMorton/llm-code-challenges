@@ -7,3 +7,4 @@ def run(df, programming_language):
     username, password = get_credentials()
     coder = LeetCoder()
     coder.login(username, password)
+    coder.navigate_to_new_problem(df)
