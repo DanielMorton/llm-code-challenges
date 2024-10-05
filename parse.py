@@ -9,24 +9,24 @@ class ProblemType(Enum):
 
 
 class ProgrammingLanguage(Enum):
-    CPP = 'C++'
-    JAVA = 'Java'
-    PYTHON = 'Python'
-    C = 'C'
-    CSHARP = 'C#'
-    JAVASCRIPT = 'Javascript'
-    TYPESCRIPT = 'Typescript'
-    PHP = 'PHP'
-    SWIFT = 'Swift'
-    KOTLIN = 'Kotlin'
-    DART = 'Dart'
-    GO = 'Go'
-    RUBY = 'Ruby'
-    SCALA = 'Scala'
-    RUST = 'Rust'
-    RACKET = 'Racket'
-    ERLANG = 'Erlang'
-    ELIXIR = 'Elixir'
+    CPP = 'cpp'
+    JAVA = 'java'
+    PYTHON = 'python'
+    C = 'c'
+    CSHARP = 'csharp'
+    JAVASCRIPT = 'javascript'
+    TYPESCRIPT = 'typescript'
+    PHP = 'php'
+    SWIFT = 'swift'
+    KOTLIN = 'kotlin'
+    DART = 'dart'
+    GO = 'go'
+    RUBY = 'ruby'
+    SCALA = 'scala'
+    RUST = 'rust'
+    RACKET = 'racket'
+    ERLANG = 'erlang'
+    ELIXIR = 'elixir'
 
 
 def parse_arguments():
@@ -35,9 +35,12 @@ def parse_arguments():
     parser.add_argument('--problem-file', type=str, required=True, help="Path to the problem file")
 
     problem_type_group = parser.add_mutually_exclusive_group(required=True)
-    for prob_type in ProblemType:
-        problem_type_group.add_argument(f'-{prob_type.name[0].lower()}', f'--{prob_type.value}',
-                                        action='store_const', const=prob_type, dest='problem_type')
+    problem_type_group.add_argument('-l', '--leetcode', action='store_const', const=ProblemType.LEETCODE,
+                                    dest='problem_type')
+    problem_type_group.add_argument('-r', '--rosalind', action='store_const', const=ProblemType.ROSALIND,
+                                    dest='problem_type')
+    problem_type_group.add_argument('-k', '--hackerrank', action='store_const', const=ProblemType.HACKERRANK,
+                                    dest='problem_type')
 
     lang_group = parser.add_mutually_exclusive_group(required=True)
     for lang in ProgrammingLanguage:

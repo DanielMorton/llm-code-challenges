@@ -3,7 +3,6 @@ CODE_EXAMPLE_PREFIX = "Here's the starting code provided by LeetCode:"  # Prefix
 END_OF_PROMPT_INSTRUCTIONS_FOR_CLEAR_RESPONSE = "Provide only the Python code solution, with no additional text, comments, or questions before or after the code. The solution must start with the same class solution object and function definition(s) and their parameter(s) that the starting code had."  # Instructions for Claude to provide a clear response
 
 LEETCODEFILTER = 'https://leetcode.com/problemset/?page='
-LEETCODEPOSTFILTER = '&topicSlugs=array&status=NOT_STARTED'
 LEETCODE_PROBLEM_PREFIX = "https://leetcode.com/problems/"
 
 INNER_HTML = 'innerHTML'

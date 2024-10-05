@@ -1,4 +1,3 @@
-import random
 
 from bs4 import BeautifulSoup
 import re
@@ -6,7 +5,7 @@ import time
 from selenium.common import NoSuchElementException, TimeoutException
 from coder import (
     PROBLEM_DESCRIPTION, INNER_HTML, RUN_BUTTON, SUBMIT_BUTTON, RUNTIME_ERROR,
-    TEST_CASE_BUTTON, TEST_CASE_INPUTS, TEST_CASE_OUTPUTS, LEETCODE_PROBLEM_PREFIX, LEETCODEFILTER, LEETCODEPOSTFILTER
+    TEST_CASE_BUTTON, TEST_CASE_INPUTS, TEST_CASE_OUTPUTS, LEETCODE_PROBLEM_PREFIX, LEETCODEFILTER
 )
 from crawler.leetcrawler import LeetCrawler
 from selenium.webdriver.common.by import By
@@ -16,7 +15,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 
 class LeetCoder(LeetCrawler):
-    def __init__(self, max_retries, *args):
+    def __init__(self, max_retries=3, *args):
         super().__init__(*args)
         self.max_retries = max_retries
 
@@ -160,10 +159,11 @@ Constraints:
         except Exception as e:
             print(f"Error submitting solution: {str(e)}")
 
-    def navigate_to_new_problem(self, current_page):
+    def navigate_to_new_problem(self, df):
+        current_page = 1
         print(f"Navigating to problem set page {current_page}...")
         self.navigate_to(
-            f"{LEETCODEFILTER}{current_page}{LEETCODEPOSTFILTER}")  # Navigate to the problem set page
+            f"{LEETCODEFILTER}{current_page}")  # Navigate to the problem set page
 
         while True:
             print(f"Waiting 5 seconds for problem list on page {current_page} to load...")
@@ -184,32 +184,26 @@ Constraints:
                 if len(cells) >= 2:
                     title_cell = cells[1]  # The title is in the second cell
 
-                    # Check if the problem is not premium and not failed
+                    # Check if the problem is not premium and not attempted
                     title_link = title_cell.find_element(By.CSS_SELECTOR, 'a[href^="/problems/"]')
-                    if 'opacity-60' not in title_link.get_attribute('class') and title_link.text not in FAILED_PROBLEMS:
-                        available_problems.append(title_link)
+                    if ('opacity-60' not in title_link.get_attribute('class')
+                            and title_link.text not in df['Problem Name']):
+                        problem_url = title_link.get_attribute('href')
+                        problem_title = title_link.text
+                        print(f"Selected problem: {problem_title}")
+                        print(f"Navigating to: {problem_url}")
+                        self.navigate_to(problem_url)  # Navigate to the selected problem
+                        print("Waiting 5 seconds for problem page to load...")
+                        time.sleep(5)  # Wait for 5 seconds after navigating to the problem
+                        return problem_title
 
-            if available_problems:
-                random_problem = random.choice(available_problems)  # Choose a random problem from available problems
-                problem_url = random_problem.get_attribute('href')
-                problem_title = random_problem.text
-                print(f"Selected problem: {problem_title} from page {current_page}")
-                print(f"Navigating to: {problem_url}")
-                self.navigate_to(problem_url)  # Navigate to the selected problem
-                print("Waiting 5 seconds for problem page to load...")
-                time.sleep(5)  # Wait for 5 seconds after navigating to the problem
-                return problem_title
-            else:
-                print(f"No available problems on page {current_page}. Attempting to go to next page...")
-                next_button = self.driver.find_element(By.XPATH, '//button[@aria-label="next"]')
-                if next_button.is_enabled():
-                    next_button.click()  # Click the next page button if available
-                    current_page += 1
-                    print(f"Navigating to page {current_page}...")
-                    time.sleep(5)  # Wait for 5 seconds after clicking next
-
-        # Ensure Python language is selected
-        self.ensure_python_language()
+            print(f"No available problems on page {current_page}. Attempting to go to next page...")
+            next_button = self.driver.find_element(By.XPATH, '//button[@aria-label="next"]')
+            if next_button.is_enabled():
+                next_button.click()  # Click the next page button if available
+                current_page += 1
+                print(f"Navigating to page {current_page}...")
+                time.sleep(5)  # Wait for 5 seconds after clicking next
 
     def complete_individual_problem(self, code_gen, problem_title):
         print(f"Starting to solve problem: {problem_title}")
