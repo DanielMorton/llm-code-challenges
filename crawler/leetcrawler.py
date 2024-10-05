@@ -11,8 +11,8 @@ from selenium.common.exceptions import TimeoutException, ElementClickIntercepted
 
 
 class LeetCrawler(Crawler):
-    def __init__(self, max_attempts=3):
-        super().__init__()
+    def __init__(self, timeout=30, max_attempts=3):
+        super().__init__(timeout)
         self.max_attempts = max_attempts
 
     def login(self, username, password):

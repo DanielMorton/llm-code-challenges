@@ -2,10 +2,11 @@ import undetected_chromedriver as uc
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 
+
 class Crawler:
-    def __init__(self):
+    def __init__(self, timeout=30):
         self.driver = uc.Chrome(use_subprocess=True)
-        self.wait = WebDriverWait(self.driver, 30)
+        self.wait = WebDriverWait(self.driver, timeout)
         print("Crawler initialized.")
 
     def navigate_to(self, url):

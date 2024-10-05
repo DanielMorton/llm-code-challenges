@@ -1,16 +1,18 @@
-# This is a sample Python script.
-
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+from parse import parse_arguments
+from read import read_or_create_dataframe
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
+def main():
+    try:
+        problem_type, problem_file, programming_language = parse_arguments()
+        print(f"Problem type: {problem_type}")
+        print(f"Problem file: {problem_file}")
+        print(f"Programming language: {programming_language.value}")
+
+        df = read_or_create_dataframe(problem_file)
+    except Exception as e:
+        print(f"Error: {str(e)}")
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    main()

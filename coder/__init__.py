@@ -2,6 +2,9 @@ ADVOCATE_FOR_BETTER_SOLUTION_ON_RETRY = "Don't use the same approach as the curr
 CODE_EXAMPLE_PREFIX = "Here's the starting code provided by LeetCode:"  # Prefix for introducing LeetCode's starting code to Claude
 END_OF_PROMPT_INSTRUCTIONS_FOR_CLEAR_RESPONSE = "Provide only the Python code solution, with no additional text, comments, or questions before or after the code. The solution must start with the same class solution object and function definition(s) and their parameter(s) that the starting code had."  # Instructions for Claude to provide a clear response
 
+LEETCODEFILTER = 'https://leetcode.com/problemset/?page='
+LEETCODEPOSTFILTER = '&topicSlugs=array&status=NOT_STARTED'
+LEETCODE_PROBLEM_PREFIX = "https://leetcode.com/problems/"
 
 INNER_HTML = 'innerHTML'
 
@@ -17,5 +20,5 @@ STARTING_A_NEW_PROBLEM_PROMPT = "Solve this LeetCode problem in Python, optimizi
 SUBMITTING_A_CODE_ERROR_PROMPT = "We need to fix our code for a leetcode python problem. Here's what the problem description was: "  # Prompt for Claude when submitting a code with errors
 
 TEST_CASE_BUTTON = 'div.cursor-pointer.rounded-lg.px-4.py-1.font-medium'
-TEST_CASE_INPUTS =  "//div[contains(@class, 'bg-fill-4')]/div/div[contains(@class, 'font-menlo')]"
+TEST_CASE_INPUTS = "//div[contains(@class, 'bg-fill-4')]/div/div[contains(@class, 'font-menlo')]"
 TEST_CASE_OUTPUTS = 'div.flex.h-full.w-full.flex-col.space-y-2'
