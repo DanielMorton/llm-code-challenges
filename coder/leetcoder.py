@@ -1,4 +1,3 @@
-
 from bs4 import BeautifulSoup
 import re
 import time
@@ -15,9 +14,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 
 class LeetCoder(LeetCrawler):
-    def __init__(self, max_retries=3, *args):
-        super().__init__(*args)
-        self.max_retries = max_retries
+    def __init__(self, code_gen, programming_language, headless=False, max_attempts=3):
+        super().__init__(headless=headless, max_attempts=max_attempts)
+        self.code_gen = code_gen
+        self.max_attempts = max_attempts
+        self.programming_language = programming_language
 
     @staticmethod
     def parse_leetcode_problem(html_content):
@@ -177,7 +178,6 @@ Constraints:
             print("Selecting a random non-premium, non-failed problem...")
             problem_rows = self.driver.find_elements(By.CSS_SELECTOR,
                                                      'div[role="row"]')  # Find all problem rows
-            available_problems = []
 
             for row in problem_rows:
                 cells = row.find_elements(By.CSS_SELECTOR, 'div[role="cell"]')
@@ -205,9 +205,9 @@ Constraints:
                 print(f"Navigating to page {current_page}...")
                 time.sleep(5)  # Wait for 5 seconds after clicking next
 
-    def complete_individual_problem(self, code_gen, problem_title):
+    def complete_individual_problem(self, problem_title):
         print(f"Starting to solve problem: {problem_title}")
-        current_url = self.current_url()
+        current_url = self.get_current_url()
         if not current_url.startswith(LEETCODE_PROBLEM_PREFIX):
             print("Error: Not on a LeetCode problem page")
             raise ValueError("Not on a LeetCode problem page")
@@ -215,14 +215,16 @@ Constraints:
         # self.ensure_python_language()  # Make sure Python is selected as the programming language
         problem_description = self.get_problem_description()  # Get the problem description
         starting_code = self.get_starting_code()  # Get the initial code provided by LeetCode
+        print(problem_description)
+        print(starting_code)
 
-        for attempt in range(self.max_retries):
-            print(f"Attempt {attempt + 1} of {self.max_retries}")
+        for attempt in range(self.max_attempts):
+            print(f"Attempt {attempt + 1} of {self.max_attempts}")
             if not attempt:
-                code = code_gen.generate_code(problem_description, starting_code)  # Generate initial code solution
+                code = self._generate_code(problem_description, starting_code)  # Generate initial code solution
             else:
-                code = code_gen.handle_error(problem_description, code, starting_code, results['result'],
-                                             error_info)  # Generate fixed code based on previous error
+                code = self._handle_error(problem_description, code, starting_code, results['result'],
+                                          error_info)  # Generate fixed code based on previous error
             print(f"Code for attempt {attempt + 1}:\n{code}")
             self.input_code(code)  # Input the generated code into LeetCode
             self.run_code()  # Run the code
@@ -248,3 +250,34 @@ Constraints:
         print(f"Max retries reached. Adding problem '{problem_title}' to failed list and moving to next problem.")
         # FAILED_PROBLEMS.add(problem_title)  # Add the problem to the failed problems set if max retries are reached
         return False
+
+    def _assign_language(self):
+        print("Ensuring Python language is selected...")
+        try:
+            lang_select = self.wait.until(ec.element_to_be_clickable((By.CSS_SELECTOR,
+                                                                      "button.text-sm.font-normal.group")))  # Wait for the language selector to be clickable
+
+            if self.programming_language.output_name in lang_select.text.lower():
+                print(f"{self.programming_language.output_name} is already selected.")
+                return
+
+            print("Clicking language selector...")
+            lang_select.click()  # Click the language selector to open the dropdown
+            time.sleep(1)  # Wait for dropdown to open
+
+            print(f"Selecting {self.programming_language.output_name} from dropdown...")
+            language_xpath = f"//div[contains(@class, 'text-text-primary') and text()='{self.programming_language.output_name}']"
+            language_option = self.wait.until(ec.element_to_be_clickable((By.XPATH,
+                                                                          language_xpath)))  # Wait for the Python option to be clickable
+            language_option.click()
+
+            print(f"Successfully set language to {self.programming_language.output_name}.")
+        except (TimeoutException, NoSuchElementException) as e:
+            print(f"Error setting language to {self.programming_language.output_name}: {str(e)}")
+            print("Attempting to continue with current language selection.")
+
+    def _generate_code(self, problem_description, starting_code):
+        return self.code_gen.generate_code(problem_description, starting_code)
+
+    def _handle_error(self, problem_description, current_code, starting_code, error_message, error_info):
+        return self.code_gen.handle_error(problem_description, current_code, starting_code, error_message, error_info)

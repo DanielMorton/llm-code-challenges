@@ -4,36 +4,45 @@ from selenium.webdriver.support import expected_conditions as ec
 
 
 class Crawler:
-    def __init__(self, timeout=30):
-        self.driver = uc.Chrome(use_subprocess=True)
+    def __init__(self, headless=False, timeout=30):
+        #options = uc.ChromeOptions()
+        #options.headless = headless
+        self.driver = uc.Chrome()
         self.wait = WebDriverWait(self.driver, timeout)
-        print("Crawler initialized.")
 
     def navigate_to(self, url):
+        """Navigate to the given URL."""
         self.driver.get(url)
-        print(f"Navigated to {url}")
 
-    def find_element(self, by, value):
-        return self.wait.until(ec.presence_of_element_located((by, value)))
+    def find_element(self, locator):
+        """Find an element using Selenium expected_conditions."""
+        return self.wait.until(ec.presence_of_element_located(locator))
 
-    def click_element(self, by, value):
-        element = self.wait.until(ec.element_to_be_clickable((by, value)))
+    def click_element(self, locator):
+        """Click an element."""
+        element = self.find_element(locator)
         element.click()
-        print(f"Clicked element: {by}={value}")
 
-    def input_text(self, by, value, text):
-        element = self.find_element(by, value)
+    def input_text(self, locator, text):
+        """Input text into an appropriate element."""
+        element = self.find_element(locator)
         element.clear()
         element.send_keys(text)
-        print(f"Input text into element: {by}={value}")
 
-    def get_text(self, by, value):
-        return self.find_element(by, value).text
+    def get_text(self, locator):
+        """Get text from an element."""
+        element = self.find_element(locator)
+        return element.text
 
-    def current_url(self):
+    def get_current_url(self):
+        """Return the current URL."""
         return self.driver.current_url
 
-    def press_keys(self, by, value, *keys):
-        element = self.find_element(by, value)
-        element.send_keys(keys)
-        print(f"Pressed keys {keys} on element: {by}={value}")
+    def press_key(self, locator, *keys):
+        """Press one or more Selenium keys on an element."""
+        element = self.find_element(locator)
+        element.send_keys(*keys)
+
+    def close(self):
+        """Close the browser and end the session."""
+        self.driver.quit()

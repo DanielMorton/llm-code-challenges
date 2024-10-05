@@ -11,8 +11,8 @@ from selenium.common.exceptions import TimeoutException, ElementClickIntercepted
 
 
 class LeetCrawler(Crawler):
-    def __init__(self, timeout=30, max_attempts=3):
-        super().__init__(timeout)
+    def __init__(self, max_attempts=3, headless=False, timeout=30):
+        super().__init__(headless=headless, timeout=timeout)
         self.max_attempts = max_attempts
 
     def login(self, username, password):
@@ -57,9 +57,9 @@ class LeetCrawler(Crawler):
             input("Press Enter after manually clicking Continue or if you need to proceed...")
 
     def _enter_credentials(self, username, password):
-        self.input_text(By.ID, EMAIL, username + Keys.ENTER)
+        self.input_text((By.ID, EMAIL), username + Keys.ENTER)
         self._handle_additional_auth()
-        self.input_text(By.XPATH, PASSWORD, password + Keys.ENTER)
+        self.input_text((By.XPATH, PASSWORD), password + Keys.ENTER)
 
     def _handle_additional_auth(self):
         try:

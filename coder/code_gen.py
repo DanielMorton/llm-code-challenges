@@ -3,8 +3,7 @@ from coder import (
     STARTING_A_NEW_PROBLEM_PROMPT,
     SUBMITTING_A_CODE_ERROR_PROMPT,
     CODE_EXAMPLE_PREFIX,
-    ADVOCATE_FOR_BETTER_SOLUTION_ON_RETRY,
-    END_OF_PROMPT_INSTRUCTIONS_FOR_CLEAR_RESPONSE
+    CODE_ONLY
 )
 
 
@@ -21,7 +20,6 @@ class CodeGeneration(ClaudeAPIIntegration):
 
 {problem_description}
 
-{ADVOCATE_FOR_BETTER_SOLUTION_ON_RETRY}
 {current_code}
 
 Error Message:
@@ -33,5 +31,5 @@ Detailed Error Information:
 {CODE_EXAMPLE_PREFIX}
 {starting_code}
 
-{END_OF_PROMPT_INSTRUCTIONS_FOR_CLEAR_RESPONSE}"""
+{CODE_ONLY}"""
         return self.send_prompt(prompt)
