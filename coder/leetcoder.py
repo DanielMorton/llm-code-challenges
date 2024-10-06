@@ -12,7 +12,7 @@ from coder.problem_parser import ProblemParser
 from coder.result import ResultHandler
 from crawler.leetcrawler import LeetCrawler
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions as ec
 
 
 class LeetCoder(LeetCrawler):
@@ -21,10 +21,10 @@ class LeetCoder(LeetCrawler):
         self.code_gen = code_gen
         self.programming_language = programming_language
         self.problem_parser = ProblemParser()
-        self.code_executor = CodeExecutor(self.driver, self.wait)
-        self.result_handler = ResultHandler(self.driver, self.wait)
-        self.problem_navigator = ProblemNavigator(self.driver, self.wait)
-        self.language_selector = LanguageSelector(self.driver, self.wait)
+        self.code_executor = CodeExecutor(self)
+        self.result_handler = ResultHandler(self)
+        self.problem_navigator = ProblemNavigator(self)
+        self.language_selector = LanguageSelector(self)
 
     def get_problem_description(self):
         try:
@@ -37,7 +37,7 @@ class LeetCoder(LeetCrawler):
 
     def get_starting_code(self):
         try:
-            self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '.view-lines')))
+            self.wait.until(ec.presence_of_element_located((By.CSS_SELECTOR, '.view-lines')))
             code_lines = self.driver.find_elements(By.CSS_SELECTOR, '.view-line')
             return '\n'.join(line.text for line in code_lines if line.text)
         except Exception as e:

@@ -8,9 +8,8 @@ from coder import RUNTIME_ERROR, TEST_CASE_BUTTON, TEST_CASE_INPUTS, TEST_CASE_O
 
 
 class ResultHandler:
-    def __init__(self, driver, wait):
-        self.driver = driver
-        self.wait = wait
+    def __init__(self, crawler):
+        self.crawler = crawler
 
     def get_test_results(self):
         try:
@@ -24,13 +23,13 @@ class ResultHandler:
             return {"result": f"Error: {str(e)}", "cases": []}
 
     def _wait_for_result_element(self):
-        return self.wait.until(ec.presence_of_element_located((
+        return self.crawler.presence_of_element_located(
             By.CSS_SELECTOR,
             'div[data-e2e-locator="console-result"], div.font-menlo.text-xs.text-red-60'
-        )))
+        )
 
     def _handle_runtime_error(self, result_or_error):
-        input_elements = self.driver.find_elements(By.XPATH, RUNTIME_ERROR)
+        input_elements = self.crawler.find_elements(By.XPATH, RUNTIME_ERROR)
         input_text = input_elements[0].text if input_elements else "Input not found"
         return {
             "result": "Runtime Error",
@@ -41,7 +40,7 @@ class ResultHandler:
     def _process_test_cases(self, result_or_error):
         result_text = result_or_error.text
         detailed_results = []
-        for button in self.driver.find_elements(By.CSS_SELECTOR, TEST_CASE_BUTTON):
+        for button in self.crawler.find_elements(By.CSS_SELECTOR, TEST_CASE_BUTTON):
             case_details = self._get_case_details(button)
             detailed_results.append(case_details)
         return {"result": result_text, "cases": detailed_results}
@@ -49,8 +48,8 @@ class ResultHandler:
     def _get_case_details(self, button):
         button.click()
         time.sleep(1)
-        case_details = {'Input': self.driver.find_elements(By.XPATH, TEST_CASE_INPUTS)[0].text}
-        for section in self.driver.find_elements(By.CSS_SELECTOR, TEST_CASE_OUTPUTS):
+        case_details = {'Input': self.crawler.find_elements(By.XPATH, TEST_CASE_INPUTS)[0].text}
+        for section in self.crawler.find_elements(By.CSS_SELECTOR, TEST_CASE_OUTPUTS):
             self._extract_section_details(section, case_details)
         return case_details
 

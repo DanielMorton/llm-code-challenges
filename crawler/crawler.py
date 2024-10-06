@@ -46,3 +46,11 @@ class Crawler:
     def close(self):
         """Close the browser and end the session."""
         self.driver.quit()
+
+    def wait_for_clickable_element(self, by, value):
+        """Wait for an element to be clickable and return it."""
+        return self.wait.until(ec.element_to_be_clickable((by, value)))
+
+    def wait_for_presence_of_element(self, by, value):
+        """Wait for an element to be present in the DOM and return it."""
+        return self.wait.until(ec.presence_of_element_located((by, value)))

@@ -10,5 +10,5 @@ def run(df, programming_language):
 
     username, password = get_credentials()
     coder.login(username, password)
-    problem_title = coder.navigate_to_new_problem(df)
+    problem_title = coder.problem_navigator.navigate_to_new_problem(df)
     coder.complete_individual_problem(problem_title)
